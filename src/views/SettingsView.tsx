@@ -6,15 +6,11 @@ import {
   Database,
   CheckCircle2,
   AlertTriangle,
-  Smartphone,
-  Wifi,
 } from 'lucide-react';
 import { CURRENCY_OPTIONS } from '@/constants/defaults';
 import { Category, Expense, Settings } from '@/types';
 import { formatCurrency } from '@/utils/currency';
 import { AppLogo } from '@/components/AppLogo';
-import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
 interface SettingsViewProps {
   settings: Settings;
@@ -113,37 +109,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <p className="text-xs text-neutral-500 font-normal">
             Personal Expense Tracker
           </p>
-        </div>
-      </div>
-
-      {/* PWA & Offline Capability Card */}
-      <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-5 border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col gap-3.5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Smartphone className="w-4 h-4 text-neutral-700" />
-            <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
-              Offline & PWA Capability
-            </h3>
-          </div>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Airplane Mode Ready
-          </span>
-        </div>
-
-        <p className="text-xs text-neutral-500 leading-relaxed font-normal">
-          Flow is an offline-first Progressive Web App. All screens, records, categories, and analytics run directly in your browser without requiring internet connectivity.
-        </p>
-
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="p-3 bg-neutral-50 rounded-2xl border border-neutral-200/50 flex flex-col gap-1">
-            <span className="text-[11px] text-neutral-400 font-medium">Service Worker</span>
-            <span className="font-semibold text-neutral-900">App Shell Cached</span>
-          </div>
-          <div className="p-3 bg-neutral-50 rounded-2xl border border-neutral-200/50 flex flex-col gap-1">
-            <span className="text-[11px] text-neutral-400 font-medium">Data Storage</span>
-            <span className="font-semibold text-neutral-900">Local Only (Private)</span>
-          </div>
         </div>
       </div>
 

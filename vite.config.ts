@@ -13,7 +13,7 @@ export default defineConfig({
       injectRegister: null,
       manifest: {
         id: '/',
-        name: 'flow - Personal Expense Tracker',
+        name: 'flow',
         short_name: 'flow',
         description: 'Privacy-first personal expense tracking application with monthly isolation and offline capabilities.',
         start_url: '/',
