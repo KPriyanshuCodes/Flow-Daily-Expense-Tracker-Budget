@@ -30,6 +30,8 @@ import { CategoryModal } from '@/components/CategoryModal';
 import { CategoryHistoryModal } from '@/components/CategoryHistoryModal';
 import { ConfirmDeleteModal, DeleteTarget } from '@/components/ConfirmDeleteModal';
 import { AppLogo } from '@/components/AppLogo';
+import { PWAInstallButton } from '@/components/PWAInstallButton';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'summary' | 'other' | 'categories' | 'settings'>('dashboard');
@@ -237,6 +239,7 @@ export const App: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            <PWAInstallButton />
             <button
               onClick={() => {
                 if (!hasActiveCategories) {
@@ -444,6 +447,9 @@ export const App: React.FC = () => {
           onConfirm={handleConfirmDelete}
           onCancel={() => setDeleteTarget(null)}
         />
+
+        {/* Offline Connectivity Status Pill */}
+        <OfflineIndicator />
       </div>
     </div>
   );
