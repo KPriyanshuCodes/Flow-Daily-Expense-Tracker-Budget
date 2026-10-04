@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, ChevronLeft, ChevronRight, History, Layers } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, History } from 'lucide-react';
 import { MonthlySummary, Expense, Category } from '@/types';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { formatCurrency } from '@/utils/currency';
@@ -21,10 +21,6 @@ interface DashboardViewProps {
   onNavigateToCategories: () => void;
   onViewCategoryHistory?: (categoryId: string) => void;
   otherExpenses?: Expense[];
-  otherTotalAmount?: number;
-  onNavigateToOther?: () => void;
-  onAddOtherExpense?: (categoryId?: string) => void;
-  onEditOtherExpense?: (expense: Expense) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -40,10 +36,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateToCategories,
   onViewCategoryHistory,
   otherExpenses = [],
-  otherTotalAmount = 0,
-  onNavigateToOther,
-  onAddOtherExpense,
-  onEditOtherExpense,
 }) => {
   // Navigation for months
   const months = generateMonthList(availableMonthKeys);
@@ -61,48 +53,100 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     }
   };
 
-  // Active categories with monthly spent amounts
-  const activeCategories = categories.filter((c) => c.isActive);
+  // Build unified category map that aggregates monthly expenses and other expenses
+  const categoryMap = new Map<
+    string,
+    {
+      id: string;
+      name: string;
+      icon: string;
+      color: string;
+      monthlyAmount: number;
+      monthlyCount: number;
+      otherAmount: number;
+      otherCount: number;
+    }
+  >();
 
-  // Map category spent amounts for this month
-  const categorySpendingList = activeCategories.map((cat) => {
-    const catSummary = summary.categories.find((c) => c.categoryId === cat.id);
-    const amount = catSummary ? catSummary.totalAmount : 0;
-    const percentage =
-      summary.totalSpent > 0 ? Math.round((amount / summary.totalSpent) * 100) : 0;
-    const count = catSummary ? catSummary.transactionCount : 0;
-
-    return {
-      category: cat,
-      amount,
-      percentage,
-      count,
-    };
+  // Initialize with known categories
+  categories.forEach((cat) => {
+    categoryMap.set(cat.id, {
+      id: cat.id,
+      name: cat.name,
+      icon: cat.icon,
+      color: cat.color,
+      monthlyAmount: 0,
+      monthlyCount: 0,
+      otherAmount: 0,
+      otherCount: 0,
+    });
   });
 
-  // Also include any category from summary that has expenses this month but isn't in activeCategories
+  // Populate monthly expenses from summary
   summary.categories.forEach((sumCat) => {
-    if (!activeCategories.some((c) => c.id === sumCat.categoryId)) {
-      categorySpendingList.push({
-        category: {
-          id: sumCat.categoryId,
-          name: sumCat.categoryName,
-          icon: sumCat.categoryIcon,
-          color: sumCat.categoryColor,
-          isActive: false,
-          createdAt: '',
-        },
-        amount: sumCat.totalAmount,
-        percentage: sumCat.percentage,
-        count: sumCat.transactionCount,
+    const existing = categoryMap.get(sumCat.categoryId);
+    if (existing) {
+      existing.monthlyAmount = sumCat.totalAmount;
+      existing.monthlyCount = sumCat.transactionCount;
+    } else {
+      categoryMap.set(sumCat.categoryId, {
+        id: sumCat.categoryId,
+        name: sumCat.categoryName,
+        icon: sumCat.categoryIcon,
+        color: sumCat.categoryColor,
+        monthlyAmount: sumCat.totalAmount,
+        monthlyCount: sumCat.transactionCount,
+        otherAmount: 0,
+        otherCount: 0,
       });
     }
   });
 
-  // Sort by highest amount spent first, then alphabetical
-  categorySpendingList.sort((a, b) => {
-    if (b.amount !== a.amount) return b.amount - a.amount;
-    return a.category.name.localeCompare(b.category.name);
+  // Populate Other Expenses into their respective categories
+  otherExpenses.forEach((oe) => {
+    const catId = oe.categoryId || 'other';
+    const existing = categoryMap.get(catId);
+    if (existing) {
+      existing.otherAmount += oe.amount;
+      existing.otherCount += 1;
+    } else {
+      categoryMap.set(catId, {
+        id: catId,
+        name: oe.categoryName || 'Other Expenses',
+        icon: oe.categoryIcon || 'Layers',
+        color: oe.categoryColor || '#737373',
+        monthlyAmount: 0,
+        monthlyCount: 0,
+        otherAmount: oe.amount,
+        otherCount: 1,
+      });
+    }
+  });
+
+  // Filter to show ONLY categories that currently have at least one expense entry
+  // Hide categories that have zero expenses
+  const activeCategorySpendingList = Array.from(categoryMap.values())
+    .map((item) => {
+      const totalAmount = item.monthlyAmount + item.otherAmount;
+      const totalCount = item.monthlyCount + item.otherCount;
+      const percentage =
+        summary.totalSpent > 0 && item.monthlyAmount > 0
+          ? Math.round((item.monthlyAmount / summary.totalSpent) * 100)
+          : 0;
+
+      return {
+        ...item,
+        totalAmount,
+        totalCount,
+        percentage,
+      };
+    })
+    .filter((item) => item.totalCount > 0);
+
+  // Sort by highest total amount first, then alphabetical
+  activeCategorySpendingList.sort((a, b) => {
+    if (b.totalAmount !== a.totalAmount) return b.totalAmount - a.totalAmount;
+    return a.name.localeCompare(b.name);
   });
 
   return (
@@ -168,7 +212,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </button>
       </div>
 
-      {/* Expense Categories List */}
+      {/* Expense Categories List (Only displays categories with at least 1 expense) */}
       <div className="bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] rounded-3xl p-5 flex flex-col gap-3">
         <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
           <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
@@ -182,7 +226,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </button>
         </div>
 
-        {!hasCategories ? (
+        {!hasCategories && activeCategorySpendingList.length === 0 ? (
           <div className="py-8 text-center flex flex-col items-center justify-center gap-3">
             <p className="text-xs text-neutral-500">
               No categories yet. Create your first category to start tracking.
@@ -194,16 +238,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               Create Category
             </button>
           </div>
-        ) : categorySpendingList.length === 0 ? (
-          <div className="py-6 text-center">
-            <p className="text-xs text-neutral-400">All categories are currently deactivated.</p>
+        ) : activeCategorySpendingList.length === 0 ? (
+          <div className="py-8 text-center flex flex-col items-center justify-center gap-2.5">
+            <p className="text-xs text-neutral-400">
+              No expenses recorded for this month yet.
+            </p>
+            <button
+              onClick={() => onAddExpense()}
+              className="text-xs font-semibold text-neutral-900 hover:underline cursor-pointer"
+            >
+              + Add First Expense
+            </button>
           </div>
         ) : (
           <div className="flex flex-col divide-y divide-neutral-100/80">
-            {categorySpendingList.map(({ category, amount, percentage, count }) => (
+            {activeCategorySpendingList.map((item) => (
               <div
-                key={category.id}
-                onClick={() => onViewCategoryHistory && onViewCategoryHistory(category.id)}
+                key={item.id}
+                onClick={() => onViewCategoryHistory && onViewCategoryHistory(item.id)}
                 className="py-3 px-1 -mx-1 rounded-2xl hover:bg-white/60 transition-all cursor-pointer flex flex-col gap-2 group"
                 title="View Category History"
               >
@@ -211,17 +263,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   {/* Category Icon & Name */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="w-9 h-9 rounded-xl bg-neutral-100 border border-neutral-200/60 flex items-center justify-center text-neutral-800 shrink-0">
-                      <CategoryIcon name={category.icon} size={16} />
+                      <CategoryIcon name={item.icon || 'ShoppingCart'} size={16} />
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <span className="text-sm font-semibold text-neutral-900 block truncate group-hover:text-neutral-700 transition-colors">
-                        {category.name}
-                      </span>
-                      <span className="text-[11px] text-neutral-400 tabular-nums">
-                        {count > 0
-                          ? `${count} ${count === 1 ? 'entry' : 'entries'} · ${percentage}%`
-                          : 'No expenses yet'}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-sm font-semibold text-neutral-900 block truncate group-hover:text-neutral-700 transition-colors">
+                          {item.name}
+                        </span>
+                        {item.otherCount > 0 && item.monthlyCount === 0 && (
+                          <span className="text-[10px] font-medium text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded-md border border-neutral-200/60">
+                            Other
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Subtitle / breakdown */}
+                      <span className="text-[11px] text-neutral-400 tabular-nums block truncate">
+                        {item.monthlyCount > 0 && item.otherCount > 0
+                          ? `${item.monthlyCount} monthly (${formatCurrency(item.monthlyAmount, currency)}) · ${item.otherCount} other (${formatCurrency(item.otherAmount, currency)})`
+                          : item.otherCount > 0
+                          ? `${item.otherCount} ${item.otherCount === 1 ? 'other expense' : 'other expenses'}`
+                          : `${item.monthlyCount} ${item.monthlyCount === 1 ? 'entry' : 'entries'}${item.percentage > 0 ? ` · ${item.percentage}%` : ''}`}
                       </span>
                     </div>
                   </div>
@@ -229,17 +292,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   {/* Amount Spent & Quick Add Action */}
                   <div className="flex items-center gap-2.5 shrink-0">
                     <span className="text-sm font-bold font-mono text-neutral-900 tabular-nums">
-                      {formatCurrency(amount, currency)}
+                      {formatCurrency(item.totalAmount, currency)}
                     </span>
 
                     {/* Quick Add Button for this category */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onAddExpense(category.id);
+                        onAddExpense(item.id);
                       }}
                       className="w-8 h-8 rounded-xl bg-neutral-100 hover:bg-neutral-900 hover:text-white text-neutral-700 flex items-center justify-center transition-all cursor-pointer active:scale-95"
-                      title={`Quick add expense in ${category.name}`}
+                      title={`Quick add expense in ${item.name}`}
                     >
                       <Plus className="w-3.5 h-3.5 stroke-2" />
                     </button>
@@ -248,7 +311,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (onViewCategoryHistory) onViewCategoryHistory(category.id);
+                        if (onViewCategoryHistory) onViewCategoryHistory(item.id);
                       }}
                       className="w-8 h-8 rounded-xl text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 flex items-center justify-center transition-all cursor-pointer"
                       title="View history"
@@ -259,12 +322,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
 
                 {/* Minimal Grey Progress Bar */}
-                {amount > 0 && (
+                {item.percentage > 0 && (
                   <div className="w-full h-1 rounded-full bg-neutral-100 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-neutral-800 transition-all duration-300"
                       style={{
-                        width: `${Math.min(100, Math.max(3, percentage))}%`,
+                        width: `${Math.min(100, Math.max(3, item.percentage))}%`,
                       }}
                     />
                   </div>
@@ -274,104 +337,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         )}
       </div>
-
-      {/* Other Expenses Card (Kept separate from regular monthly expenses) */}
-      <div className="bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] rounded-3xl p-5 flex flex-col gap-3">
-        <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
-          <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-neutral-700" />
-            <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-              Other Expenses
-            </span>
-            <span className="text-[10px] font-medium text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full">
-              Non-Monthly
-            </span>
-          </div>
-          {onNavigateToOther && (
-            <button
-              onClick={onNavigateToOther}
-              className="text-xs font-medium text-neutral-500 hover:text-neutral-900 transition-colors cursor-pointer"
-            >
-              View All →
-            </button>
-          )}
-        </div>
-
-        {otherExpenses.length === 0 ? (
-          <div className="py-4 text-center flex flex-col items-center justify-center gap-2">
-            <p className="text-xs text-neutral-400">
-              No other expenses yet
-            </p>
-            {onAddOtherExpense && (
-              <button
-                onClick={() => onAddOtherExpense()}
-                className="text-xs font-semibold text-neutral-900 hover:underline cursor-pointer"
-              >
-                + Add Other Expense
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-baseline justify-between pt-1">
-              <div>
-                <span className="text-2xl font-extrabold text-neutral-900 tracking-tight font-mono tabular-nums">
-                  {formatCurrency(otherTotalAmount, currency)}
-                </span>
-                <span className="text-xs text-neutral-400 ml-2">
-                  ({otherExpenses.length} {otherExpenses.length === 1 ? 'entry' : 'entries'})
-                </span>
-              </div>
-              {onAddOtherExpense && (
-                <button
-                  onClick={() => onAddOtherExpense()}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-neutral-100 hover:bg-neutral-900 hover:text-white text-neutral-700 text-xs font-semibold transition-all cursor-pointer active:scale-95"
-                >
-                  <Plus className="w-3.5 h-3.5 stroke-2" />
-                  <span>Add</span>
-                </button>
-              )}
-            </div>
-
-            {/* List top/recent other expenses */}
-            <div className="flex flex-col divide-y divide-neutral-100/80 pt-1">
-              {otherExpenses.slice(0, 3).map((expense) => (
-                <div
-                  key={expense.id}
-                  onClick={() => {
-                    if (onEditOtherExpense) {
-                      onEditOtherExpense(expense);
-                    } else if (onNavigateToOther) {
-                      onNavigateToOther();
-                    }
-                  }}
-                  className="py-2.5 px-1 -mx-1 rounded-xl hover:bg-white/60 transition-all cursor-pointer flex items-center justify-between group"
-                  title="Click to edit other expense"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div className="w-8 h-8 rounded-xl bg-neutral-100 border border-neutral-200/60 flex items-center justify-center text-neutral-800 shrink-0">
-                      <CategoryIcon name={expense.categoryIcon || 'Layers'} size={14} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-xs font-semibold text-neutral-900 block truncate group-hover:text-neutral-700">
-                        {expense.categoryName || 'Other Expense'}
-                      </span>
-                      <span className="text-[11px] text-neutral-400 block truncate">
-                        {expense.note ? expense.note : expense.date}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <span className="text-xs font-bold font-mono text-neutral-900 tabular-nums">
-                      {formatCurrency(expense.amount, currency)}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
+

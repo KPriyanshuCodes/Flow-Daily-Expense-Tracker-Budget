@@ -276,10 +276,6 @@ export const App: React.FC = () => {
               onNavigateToCategories={() => setActiveTab('categories')}
               onViewCategoryHistory={handleOpenCategoryHistoryById}
               otherExpenses={otherExpenses}
-              otherTotalAmount={totalOtherAmount}
-              onNavigateToOther={() => setActiveTab('other')}
-              onAddOtherExpense={handleOpenAddOtherExpense}
-              onEditOtherExpense={handleOpenEditOtherExpense}
             />
           )}
 
