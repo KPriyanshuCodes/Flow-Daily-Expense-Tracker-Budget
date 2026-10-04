@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import flowLogoAsset from '@/assets/images/flow_logo_1791016165796.jpg';
 
 interface AppLogoProps {
   className?: string;
@@ -6,17 +7,26 @@ interface AppLogoProps {
 }
 
 export const AppLogo: React.FC<AppLogoProps> = ({ className = 'w-9 h-9', size }) => {
+  const [imgSrc, setImgSrc] = useState<string>(flowLogoAsset || '/flow-logo.jpg');
+
   return (
     <div
-      className={`relative rounded-2xl overflow-hidden shadow-xs border border-stone-800 bg-stone-950 flex items-center justify-center shrink-0 select-none ${className}`}
+      className={`relative rounded-2xl overflow-hidden shadow-xs border border-neutral-800 bg-[#111214] flex items-center justify-center shrink-0 select-none ${className}`}
       style={size ? { width: size, height: size } : undefined}
     >
       <img
-        src="/src/assets/images/flow_logo_1791016165796.jpg"
+        src={imgSrc}
         alt="flow logo"
-        referrerPolicy="no-referrer"
         className="w-full h-full object-cover scale-100"
+        onError={() => {
+          if (imgSrc !== '/flow-logo.jpg') {
+            setImgSrc('/flow-logo.jpg');
+          } else {
+            setImgSrc('/pwa-192x192.png');
+          }
+        }}
       />
     </div>
   );
 };
+

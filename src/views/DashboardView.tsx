@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, ChevronLeft, ChevronRight, History } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, History, Layers } from 'lucide-react';
 import { MonthlySummary, Expense, Category } from '@/types';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { formatCurrency } from '@/utils/currency';
@@ -20,6 +20,11 @@ interface DashboardViewProps {
   onNavigateToSummary: () => void;
   onNavigateToCategories: () => void;
   onViewCategoryHistory?: (categoryId: string) => void;
+  otherExpenses?: Expense[];
+  otherTotalAmount?: number;
+  onNavigateToOther?: () => void;
+  onAddOtherExpense?: (categoryId?: string) => void;
+  onEditOtherExpense?: (expense: Expense) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -34,6 +39,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateToSummary,
   onNavigateToCategories,
   onViewCategoryHistory,
+  otherExpenses = [],
+  otherTotalAmount = 0,
+  onNavigateToOther,
+  onAddOtherExpense,
+  onEditOtherExpense,
 }) => {
   // Navigation for months
   const months = generateMonthList(availableMonthKeys);
@@ -261,6 +271,104 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 )}
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Other Expenses Card (Kept separate from regular monthly expenses) */}
+      <div className="bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] rounded-3xl p-5 flex flex-col gap-3">
+        <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-neutral-700" />
+            <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+              Other Expenses
+            </span>
+            <span className="text-[10px] font-medium text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full">
+              Non-Monthly
+            </span>
+          </div>
+          {onNavigateToOther && (
+            <button
+              onClick={onNavigateToOther}
+              className="text-xs font-medium text-neutral-500 hover:text-neutral-900 transition-colors cursor-pointer"
+            >
+              View All →
+            </button>
+          )}
+        </div>
+
+        {otherExpenses.length === 0 ? (
+          <div className="py-4 text-center flex flex-col items-center justify-center gap-2">
+            <p className="text-xs text-neutral-400">
+              No other expenses yet
+            </p>
+            {onAddOtherExpense && (
+              <button
+                onClick={() => onAddOtherExpense()}
+                className="text-xs font-semibold text-neutral-900 hover:underline cursor-pointer"
+              >
+                + Add Other Expense
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-baseline justify-between pt-1">
+              <div>
+                <span className="text-2xl font-extrabold text-neutral-900 tracking-tight font-mono tabular-nums">
+                  {formatCurrency(otherTotalAmount, currency)}
+                </span>
+                <span className="text-xs text-neutral-400 ml-2">
+                  ({otherExpenses.length} {otherExpenses.length === 1 ? 'entry' : 'entries'})
+                </span>
+              </div>
+              {onAddOtherExpense && (
+                <button
+                  onClick={() => onAddOtherExpense()}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-neutral-100 hover:bg-neutral-900 hover:text-white text-neutral-700 text-xs font-semibold transition-all cursor-pointer active:scale-95"
+                >
+                  <Plus className="w-3.5 h-3.5 stroke-2" />
+                  <span>Add</span>
+                </button>
+              )}
+            </div>
+
+            {/* List top/recent other expenses */}
+            <div className="flex flex-col divide-y divide-neutral-100/80 pt-1">
+              {otherExpenses.slice(0, 3).map((expense) => (
+                <div
+                  key={expense.id}
+                  onClick={() => {
+                    if (onEditOtherExpense) {
+                      onEditOtherExpense(expense);
+                    } else if (onNavigateToOther) {
+                      onNavigateToOther();
+                    }
+                  }}
+                  className="py-2.5 px-1 -mx-1 rounded-xl hover:bg-white/60 transition-all cursor-pointer flex items-center justify-between group"
+                  title="Click to edit other expense"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="w-8 h-8 rounded-xl bg-neutral-100 border border-neutral-200/60 flex items-center justify-center text-neutral-800 shrink-0">
+                      <CategoryIcon name={expense.categoryIcon || 'Layers'} size={14} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-xs font-semibold text-neutral-900 block truncate group-hover:text-neutral-700">
+                        {expense.categoryName || 'Other Expense'}
+                      </span>
+                      <span className="text-[11px] text-neutral-400 block truncate">
+                        {expense.note ? expense.note : expense.date}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <span className="text-xs font-bold font-mono text-neutral-900 tabular-nums">
+                      {formatCurrency(expense.amount, currency)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

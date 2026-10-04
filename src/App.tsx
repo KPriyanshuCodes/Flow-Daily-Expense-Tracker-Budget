@@ -31,7 +31,6 @@ import { CategoryHistoryModal } from '@/components/CategoryHistoryModal';
 import { ConfirmDeleteModal, DeleteTarget } from '@/components/ConfirmDeleteModal';
 import { AppLogo } from '@/components/AppLogo';
 import { PWAInstallButton } from '@/components/PWAInstallButton';
-import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'summary' | 'other' | 'categories' | 'settings'>('dashboard');
@@ -276,6 +275,11 @@ export const App: React.FC = () => {
               onNavigateToSummary={() => setActiveTab('summary')}
               onNavigateToCategories={() => setActiveTab('categories')}
               onViewCategoryHistory={handleOpenCategoryHistoryById}
+              otherExpenses={otherExpenses}
+              otherTotalAmount={totalOtherAmount}
+              onNavigateToOther={() => setActiveTab('other')}
+              onAddOtherExpense={handleOpenAddOtherExpense}
+              onEditOtherExpense={handleOpenEditOtherExpense}
             />
           )}
 
@@ -447,9 +451,6 @@ export const App: React.FC = () => {
           onConfirm={handleConfirmDelete}
           onCancel={() => setDeleteTarget(null)}
         />
-
-        {/* Offline Connectivity Status Pill */}
-        <OfflineIndicator />
       </div>
     </div>
   );
