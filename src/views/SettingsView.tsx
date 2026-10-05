@@ -6,9 +6,12 @@ import {
   Database,
   CheckCircle2,
   AlertTriangle,
+  Tag,
+  Layers,
+  ChevronRight,
 } from 'lucide-react';
 import { CURRENCY_OPTIONS } from '@/constants/defaults';
-import { Category, Expense, Settings } from '@/types';
+import { Category, Expense, Settings, Todo } from '@/types';
 import { formatCurrency } from '@/utils/currency';
 import { AppLogo } from '@/components/AppLogo';
 
@@ -19,6 +22,9 @@ interface SettingsViewProps {
   categories: Category[];
   expenses: Expense[];
   otherExpenses?: Expense[];
+  todos?: Todo[];
+  onManageCategories?: () => void;
+  onOpenOtherExpenses?: () => void;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
@@ -28,6 +34,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   categories,
   expenses,
   otherExpenses = [],
+  todos = [],
+  onManageCategories,
+  onOpenOtherExpenses,
 }) => {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -47,6 +56,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       categories,
       expenses,
       otherExpenses,
+      todos,
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: 'application/json',
@@ -73,6 +83,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           localStorage.setItem('dailyspend_expenses_v1', JSON.stringify(parsed.expenses));
           if (parsed.otherExpenses) {
             localStorage.setItem('dailyspend_other_expenses_v1', JSON.stringify(parsed.otherExpenses));
+          }
+          if (parsed.todos) {
+            localStorage.setItem('dailyspend_todos_v1', JSON.stringify(parsed.todos));
           }
           if (parsed.settings) {
             localStorage.setItem('dailyspend_settings_v1', JSON.stringify(parsed.settings));
@@ -147,6 +160,58 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
       </div>
 
+      {/* Category Management Card */}
+      {onManageCategories && (
+        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-5 border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-neutral-100 border border-neutral-200/50 flex items-center justify-center text-neutral-700">
+              <Tag className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
+                Manage Categories
+              </h3>
+              <p className="text-xs text-neutral-500 font-normal">
+                {categories.length} total categories ({categories.filter((c) => c.isActive).length} active)
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onManageCategories}
+            className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer flex items-center gap-1 active:scale-95 min-h-[40px]"
+          >
+            <span>Manage</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Other Expenses Access Card */}
+      {onOpenOtherExpenses && otherExpenses.length > 0 && (
+        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-5 border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-neutral-100 border border-neutral-200/50 flex items-center justify-center text-neutral-700">
+              <Layers className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
+                Other Expenses
+              </h3>
+              <p className="text-xs text-neutral-500 font-normal">
+                {otherExpenses.length} entries recorded outside monthly budget
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onOpenOtherExpenses}
+            className="px-3.5 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-900 hover:text-white text-neutral-800 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 active:scale-95 min-h-[40px]"
+          >
+            <span>View</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Storage & Lifetime Stats in Light Frosted Glass */}
       <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-5 border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col gap-3.5">
         <div className="flex items-center gap-2">
@@ -156,7 +221,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </h3>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
           <div className="bg-neutral-50 rounded-2xl p-3 text-center border border-neutral-200/50">
             <span className="text-[11px] text-neutral-400 font-medium block">Categories</span>
             <span className="text-lg font-bold text-neutral-900 mt-0.5 block font-mono">
@@ -165,21 +230,28 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
 
           <div className="bg-neutral-50 rounded-2xl p-3 text-center border border-neutral-200/50">
-            <span className="text-[11px] text-neutral-400 font-medium block">Monthly Entries</span>
+            <span className="text-[11px] text-neutral-400 font-medium block">Monthly</span>
             <span className="text-lg font-bold text-neutral-900 mt-0.5 block font-mono">
               {expenses.length}
             </span>
           </div>
 
           <div className="bg-neutral-50 rounded-2xl p-3 text-center border border-neutral-200/50">
-            <span className="text-[11px] text-neutral-400 font-medium block">Other Entries</span>
+            <span className="text-[11px] text-neutral-400 font-medium block">Other</span>
             <span className="text-lg font-bold text-neutral-900 mt-0.5 block font-mono">
               {otherExpenses.length}
             </span>
           </div>
 
           <div className="bg-neutral-50 rounded-2xl p-3 text-center border border-neutral-200/50">
-            <span className="text-[11px] text-neutral-400 font-medium block">Monthly Total</span>
+            <span className="text-[11px] text-neutral-400 font-medium block">To-Do Tasks</span>
+            <span className="text-lg font-bold text-neutral-900 mt-0.5 block font-mono">
+              {todos.length}
+            </span>
+          </div>
+
+          <div className="col-span-2 sm:col-span-1 bg-neutral-50 rounded-2xl p-3 text-center border border-neutral-200/50">
+            <span className="text-[11px] text-neutral-400 font-medium block">Spent Total</span>
             <span className="text-sm sm:text-base font-bold text-neutral-900 mt-0.5 block truncate font-mono">
               {formatCurrency(totalLifetimeSpent, settings.currency)}
             </span>

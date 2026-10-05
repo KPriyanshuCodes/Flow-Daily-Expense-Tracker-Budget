@@ -56,8 +56,8 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
   };
 
   return (
-    <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-stone-900/30 backdrop-blur-md animate-in fade-in duration-200`}>
-      <div className="relative w-full max-w-md bg-white/90 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(28,25,23,0.12)] overflow-hidden border border-white/95 flex flex-col max-h-[90vh]">
+    <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-3 sm:p-4 bg-stone-900/30 backdrop-blur-md animate-in fade-in duration-200`}>
+      <div className="relative w-full max-w-md sm:max-w-lg bg-white/90 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(28,25,23,0.12)] overflow-hidden border border-white/95 flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200/50 bg-white/50">
           <h2 className="text-lg font-extrabold text-stone-900 tracking-tight">

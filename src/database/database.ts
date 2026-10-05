@@ -2,6 +2,7 @@ const DB_STORAGE_KEYS = {
   CATEGORIES: 'dailyspend_categories_v1',
   EXPENSES: 'dailyspend_expenses_v1',
   OTHER_EXPENSES: 'dailyspend_other_expenses_v1',
+  TODOS: 'dailyspend_todos_v1',
   SETTINGS: 'dailyspend_settings_v1',
   INITIALIZED: 'dailyspend_initialized_v1',
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Tag, FileText, Check, Plus, TrendingUp } from 'lucide-react';
+import { X, Calendar, Tag, FileText, Check, Plus } from 'lucide-react';
 import { Category, Expense } from '@/types';
 import { AmountInput } from './AmountInput';
 import { CategoryIcon } from './CategoryIcon';
@@ -40,11 +40,6 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
   const [categoryError, setCategoryError] = useState<string>('');
   const [dateError, setDateError] = useState<string>('');
 
-  // Custom Increment states
-  const [incrementStr, setIncrementStr] = useState<string>('');
-  const [incrementError, setIncrementError] = useState<string>('');
-  const [incrementSuccessMsg, setIncrementSuccessMsg] = useState<string>('');
-
   // Create another category state
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
   const [newlyCreatedCatName, setNewlyCreatedCatName] = useState<string | null>(null);
@@ -65,9 +60,6 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
     setAmountError('');
     setCategoryError('');
     setDateError('');
-    setIncrementStr('');
-    setIncrementError('');
-    setIncrementSuccessMsg('');
     setIsCreatingCategory(false);
     setNewlyCreatedCatName(null);
   }, [editingExpense, isOpen, categories, initialCategoryId]);
@@ -79,40 +71,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
     (c) => c.isActive || (editingExpense && c.id === editingExpense.categoryId)
   );
 
-  const handleApplyIncrement = (immediateSave: boolean = false) => {
-    const inc = parseFloat(incrementStr);
-    if (isNaN(inc) || inc <= 0) {
-      setIncrementError(`Please enter a valid positive increment greater than ${currency}0.`);
-      return;
-    }
-
-    const current = parseFloat(amountStr) || 0;
-    const newAmount = Math.round((current + inc) * 100) / 100;
-
-    setAmountStr(newAmount.toString());
-    setIncrementError('');
-    setIncrementSuccessMsg(`Added ${formatCurrency(inc, currency)}! New amount: ${formatCurrency(newAmount, currency)}`);
-    setIncrementStr('');
-
-    if (amountError) setAmountError('');
-
-    if (immediateSave && editingExpense && selectedCategoryId) {
-      onSave({
-        amount: newAmount,
-        categoryId: selectedCategoryId,
-        date,
-        note: note.trim() || undefined,
-      });
-      onClose();
-    }
-  };
-
   const parsedCurrentAmount = parseFloat(amountStr) || 0;
-  const parsedIncrement = parseFloat(incrementStr);
-  const isValidIncrement = !isNaN(parsedIncrement) && parsedIncrement > 0;
-  const previewNewAmount = isValidIncrement
-    ? Math.round((parsedCurrentAmount + parsedIncrement) * 100) / 100
-    : null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,8 +115,8 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
   const yesterday = getYesterdayFormatted();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/30 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-white/90 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(28,25,23,0.12)] overflow-hidden border border-white/90 flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-900/30 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-md sm:max-w-lg md:max-w-xl bg-white/90 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(28,25,23,0.12)] overflow-hidden border border-white/90 flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 bg-white/60">
           <div>
@@ -166,7 +125,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             </h2>
             {(subtitle || editingExpense) && (
               <p className="text-[11px] text-neutral-500 font-normal">
-                {subtitle || 'Adjust amount or use custom increment'}
+                {subtitle || (editingExpense ? 'Manually edit amount and details' : 'Enter amount and details')}
               </p>
             )}
           </div>
@@ -187,118 +146,10 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
               onChange={(val) => {
                 setAmountStr(val);
                 if (amountError) setAmountError('');
-                if (incrementSuccessMsg) setIncrementSuccessMsg('');
               }}
               currency={currency}
               error={amountError}
             />
-          </div>
-
-          {/* Custom Increment Box in Subtle Glass */}
-          <div className="bg-neutral-50/90 border border-neutral-200/80 rounded-2xl p-4 flex flex-col gap-3 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-neutral-900 uppercase tracking-wider flex items-center gap-1.5">
-                <TrendingUp className="w-4 h-4 text-neutral-800" />
-                Increase by (Custom Increment)
-              </label>
-              <span className="text-[10px] font-medium text-neutral-600 bg-white px-2 py-0.5 rounded-full border border-neutral-200">
-                Auto-adds to amount
-              </span>
-            </div>
-
-            <p className="text-xs text-neutral-600 leading-relaxed font-normal">
-              Enter any amount to add to current expense{' '}
-              <span className="font-bold text-neutral-900">
-                ({formatCurrency(parsedCurrentAmount, currency)})
-              </span>.
-            </p>
-
-            {/* Input and Add Button */}
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-neutral-900 select-none font-mono">
-                  +{currency}
-                </span>
-                <input
-                  type="number"
-                  step="any"
-                  min="0.01"
-                  placeholder="Increase by (e.g. 20)"
-                  value={incrementStr}
-                  onChange={(e) => {
-                    setIncrementStr(e.target.value);
-                    if (incrementError) setIncrementError('');
-                    if (incrementSuccessMsg) setIncrementSuccessMsg('');
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleApplyIncrement(false);
-                    }
-                  }}
-                  className={`w-full pl-9 pr-3 py-2 text-sm font-bold rounded-xl border bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none transition-colors ${
-                    incrementError
-                      ? 'border-neutral-900'
-                      : 'border-neutral-200 focus:border-neutral-900'
-                  }`}
-                />
-              </div>
-
-              <button
-                type="button"
-                onClick={() => handleApplyIncrement(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 shadow-xs active:scale-95 transition-all cursor-pointer flex items-center gap-1 shrink-0"
-              >
-                <Plus className="w-3.5 h-3.5 stroke-2" />
-                Add
-              </button>
-            </div>
-
-            {/* Quick chips */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-              <span className="text-[11px] font-semibold text-stone-500">Quick:</span>
-              {[5, 20, 25, 50, 75, 150].map((chip) => (
-                <button
-                  key={chip}
-                  type="button"
-                  onClick={() => {
-                    setIncrementStr(chip.toString());
-                    if (incrementError) setIncrementError('');
-                    if (incrementSuccessMsg) setIncrementSuccessMsg('');
-                  }}
-                  className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 shadow-2xs transition-colors cursor-pointer"
-                >
-                  +{chip}
-                </button>
-              ))}
-            </div>
-
-            {/* Error Message */}
-            {incrementError && (
-              <p className="text-xs font-medium text-neutral-800 bg-neutral-100 px-2.5 py-1 rounded-lg border border-neutral-200">
-                {incrementError}
-              </p>
-            )}
-
-            {/* Live Calculation Preview */}
-            {isValidIncrement && previewNewAmount !== null && (
-              <div className="text-xs font-semibold text-neutral-900 bg-white p-2.5 rounded-xl border border-neutral-200 flex items-center justify-between font-mono">
-                <span className="text-neutral-600">
-                  Current: {formatCurrency(parsedCurrentAmount, currency)} + {formatCurrency(parsedIncrement, currency)}
-                </span>
-                <span className="text-neutral-900 font-bold text-sm">
-                  ➔ New: {formatCurrency(previewNewAmount, currency)}
-                </span>
-              </div>
-            )}
-
-            {/* Success Feedback Banner */}
-            {incrementSuccessMsg && (
-              <div className="text-xs font-semibold text-neutral-900 bg-white px-3 py-2 rounded-xl border border-neutral-200 flex items-center gap-1.5 animate-in fade-in">
-                <Check className="w-4 h-4 text-neutral-900 stroke-2 shrink-0" />
-                <span>{incrementSuccessMsg}</span>
-              </div>
-            )}
           </div>
 
           {/* Category Picker Section with Create Option */}
@@ -342,7 +193,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto p-1">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-48 overflow-y-auto p-1">
                 {visibleCategories.map((cat) => {
                   const isSelected = cat.id === selectedCategoryId;
                   return (
@@ -487,7 +338,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                   <div className="text-[11px] font-medium text-neutral-700 bg-neutral-100 border border-neutral-200 px-2.5 py-1 rounded-xl flex items-center gap-1.5 animate-in fade-in">
                     <Calendar className="w-3 h-3 shrink-0 text-neutral-700" />
                     <span>
-                      Recording for {formatMonthLabel(getMonthKey(date))} (will appear in {formatMonthLabel(getMonthKey(date))} activity)
+                      Recording for {formatMonthLabel(getMonthKey(date))} (will appear in {formatMonthLabel(getMonthKey(date))} spending)
                     </span>
                   </div>
                 )}

@@ -51,3 +51,22 @@ export interface Settings {
   currency: string;
   currencyPosition: 'prefix' | 'suffix';
 }
+
+export interface TodoChecklistItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+export type TodoType = 'text' | 'checklist';
+
+export interface Todo {
+  id: string;
+  title: string;
+  type: TodoType;
+  content?: string;
+  items?: TodoChecklistItem[];
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
