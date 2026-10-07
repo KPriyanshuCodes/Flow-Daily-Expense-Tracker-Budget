@@ -1,76 +1,70 @@
 import { storage, DB_STORAGE_KEYS } from './database';
 import { Category, Expense } from '@/types';
 
-export const categoryRepository = {
+export const otherCategoryRepository = {
   getAll(): Category[] {
-    const raw = storage.get<Category[]>(DB_STORAGE_KEYS.CATEGORIES, []);
+    const raw = storage.get<Category[]>(DB_STORAGE_KEYS.OTHER_CATEGORIES, []);
     return Array.isArray(raw) ? raw : [];
   },
 
   getActive(): Category[] {
-    return this.getAll().filter(c => c.isActive);
+    return this.getAll().filter((c) => c.isActive !== false);
   },
 
   getById(id: string): Category | undefined {
     const cleanId = String(id || '').trim();
-    return this.getAll().find(c => String(c.id).trim() === cleanId);
+    return this.getAll().find((c) => String(c.id).trim() === cleanId);
   },
 
   create(data: { name: string; icon: string; color: string }): Category {
     const categories = this.getAll();
     const newCategory: Category = {
-      id: `cat-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      id: `othcat-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       name: data.name.trim(),
-      icon: data.icon,
-      color: data.color,
+      icon: data.icon || 'Layers',
+      color: data.color || '#64748b',
       isActive: true,
       createdAt: new Date().toISOString(),
     };
     categories.push(newCategory);
-    storage.set(DB_STORAGE_KEYS.CATEGORIES, categories);
+    storage.set(DB_STORAGE_KEYS.OTHER_CATEGORIES, categories);
     return newCategory;
   },
 
   update(id: string, updates: Partial<Omit<Category, 'id' | 'createdAt'>>): Category | null {
     const cleanId = String(id || '').trim();
     const categories = this.getAll();
-    const idx = categories.findIndex(c => String(c.id).trim() === cleanId);
+    const idx = categories.findIndex((c) => String(c.id).trim() === cleanId);
     if (idx === -1) return null;
 
     categories[idx] = {
       ...categories[idx],
       ...updates,
-      name: updates.name ? updates.name.trim() : categories[idx].name,
+      name: updates.name !== undefined ? updates.name.trim() : categories[idx].name,
     };
-    storage.set(DB_STORAGE_KEYS.CATEGORIES, categories);
+    storage.set(DB_STORAGE_KEYS.OTHER_CATEGORIES, categories);
     return categories[idx];
   },
 
-  // Soft-deactivation toggle
   toggleActive(id: string): Category | null {
     const cleanId = String(id || '').trim();
     const categories = this.getAll();
-    const idx = categories.findIndex(c => String(c.id).trim() === cleanId);
+    const idx = categories.findIndex((c) => String(c.id).trim() === cleanId);
     if (idx === -1) return null;
 
     categories[idx].isActive = !categories[idx].isActive;
-    storage.set(DB_STORAGE_KEYS.CATEGORIES, categories);
+    storage.set(DB_STORAGE_KEYS.OTHER_CATEGORIES, categories);
     return categories[idx];
   },
 
   getUsageCount(categoryId: string): number {
     const cleanId = String(categoryId || '').trim();
-    const rawExpenses = storage.get<Expense[]>(DB_STORAGE_KEYS.EXPENSES, []);
     const rawOtherExpenses = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
-    const expenses = Array.isArray(rawExpenses) ? rawExpenses : [];
     const otherExpenses = Array.isArray(rawOtherExpenses) ? rawOtherExpenses : [];
-    return (
-      expenses.filter(e => String(e.categoryId).trim() === cleanId).length +
-      otherExpenses.filter(e => String(e.categoryId).trim() === cleanId).length
-    );
+    return otherExpenses.filter((e) => String(e.categoryId).trim() === cleanId).length;
   },
 
-  // Permanent clean deletion
+  // Delete Other Category cleanly without touching personal categories or personal expenses
   delete(id: string): { success: boolean; error?: string; deletedExpensesCount?: number } {
     const cleanId = String(id || '').trim();
     if (!cleanId) {
@@ -78,29 +72,19 @@ export const categoryRepository = {
     }
 
     const categories = this.getAll();
-    const targetCat = categories.find((c) => String(c.id).trim() === cleanId);
-
-    // 1. Remove category from categories collection
     const remainingCategories = categories.filter((c) => String(c.id).trim() !== cleanId);
-    storage.set(DB_STORAGE_KEYS.CATEGORIES, remainingCategories);
+    storage.set(DB_STORAGE_KEYS.OTHER_CATEGORIES, remainingCategories);
 
-    // 2. Remove any expenses belonging to this deleted category without touching unrelated expenses
-    const rawExpenses = storage.get<Expense[]>(DB_STORAGE_KEYS.EXPENSES, []);
-    const expenses = Array.isArray(rawExpenses) ? rawExpenses : [];
-    const remainingExpenses = expenses.filter((e) => String(e.categoryId).trim() !== cleanId);
-    const deletedRegularCount = expenses.length - remainingExpenses.length;
-    storage.set(DB_STORAGE_KEYS.EXPENSES, remainingExpenses);
-
-    // 3. Remove any other expenses belonging to this deleted category without touching unrelated other expenses
+    // Delete any other expenses linked to this deleted other category
     const rawOther = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
     const otherExpenses = Array.isArray(rawOther) ? rawOther : [];
     const remainingOther = otherExpenses.filter((e) => String(e.categoryId).trim() !== cleanId);
-    const deletedOtherCount = otherExpenses.length - remainingOther.length;
+    const deletedCount = otherExpenses.length - remainingOther.length;
     storage.set(DB_STORAGE_KEYS.OTHER_EXPENSES, remainingOther);
 
     return {
       success: true,
-      deletedExpensesCount: deletedRegularCount + deletedOtherCount,
+      deletedExpensesCount: deletedCount,
     };
   },
 };

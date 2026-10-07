@@ -1,42 +1,10 @@
 import { storage, DB_STORAGE_KEYS } from './database';
 import { Todo, TodoChecklistItem } from '@/types';
 
-const INITIAL_TODOS: Todo[] = [
-  {
-    id: 'todo-initial-1',
-    title: 'Financial Checklist',
-    type: 'checklist',
-    isPinned: true,
-    items: [
-      { id: 'item-1', text: 'Review current month budget', completed: true },
-      { id: 'item-2', text: 'Categorize pending receipts', completed: false },
-      { id: 'item-3', text: 'Check recurring subscriptions', completed: false },
-    ],
-    createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000 * 24).toISOString(),
-  },
-  {
-    id: 'todo-initial-2',
-    title: 'Monthly Savings Goal',
-    type: 'text',
-    content: 'Target 20% savings rate this month. Keep dining and non-essential shopping within planned boundaries.',
-    isPinned: false,
-    createdAt: new Date(Date.now() - 3600000 * 48).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000 * 48).toISOString(),
-  },
-];
-
 export const todoRepository = {
   getAll(): Todo[] {
     const raw = storage.get<Todo[]>(DB_STORAGE_KEYS.TODOS, []);
     if (!raw || raw.length === 0) {
-      // Check if user has initialized before; if first time, seed initial todos
-      const initialized = localStorage.getItem('flow_todos_seeded_v1');
-      if (!initialized) {
-        storage.set(DB_STORAGE_KEYS.TODOS, INITIAL_TODOS);
-        localStorage.setItem('flow_todos_seeded_v1', 'true');
-        return INITIAL_TODOS;
-      }
       return [];
     }
 

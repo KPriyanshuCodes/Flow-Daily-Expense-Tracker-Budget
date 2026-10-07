@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check } from 'lucide-react';
+import { X, Check, Trash2 } from 'lucide-react';
 import { Category } from '@/types';
 import { AVAILABLE_ICONS } from '@/constants/defaults';
 import { CATEGORY_COLORS } from '@/constants/colors';
@@ -10,6 +10,7 @@ interface CategoryModalProps {
   onClose: () => void;
   onSave: (data: { name: string; icon: string; color: string }) => void;
   editingCategory?: Category | null;
+  onDelete?: (id: string) => void;
   zIndex?: string;
 }
 
@@ -18,6 +19,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
   onClose,
   onSave,
   editingCategory,
+  onDelete,
   zIndex = 'z-50',
 }) => {
   const [name, setName] = useState<string>('');
@@ -167,11 +169,24 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center gap-3 pt-2">
+          <div className="flex items-center gap-2.5 pt-2">
+            {editingCategory && onDelete && (
+              <button
+                type="button"
+                onClick={() => {
+                  onDelete(editingCategory.id);
+                  onClose();
+                }}
+                className="p-3 rounded-xl text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer border border-neutral-200"
+                title="Delete category"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            )}
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-4 rounded-xl text-sm font-bold text-stone-600 bg-stone-100 hover:bg-stone-200 transition-colors cursor-pointer"
+              className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold text-neutral-700 bg-neutral-100 hover:bg-neutral-200 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -180,7 +195,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
               className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-neutral-900 hover:bg-neutral-800 shadow-xs transition-all active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
-              {editingCategory ? 'Update Category' : 'Create Category'}
+              {editingCategory ? 'Update' : 'Create Category'}
             </button>
           </div>
         </form>

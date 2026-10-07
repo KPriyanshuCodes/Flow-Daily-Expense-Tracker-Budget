@@ -14,6 +14,7 @@ interface CategoryHistoryModalProps {
   onAddExpenseForCategory?: (categoryId: string) => void;
   onEditExpense?: (expense: Expense) => void;
   onDeleteExpense?: (id: string) => void;
+  onDeleteCategory?: (categoryId: string) => void;
 }
 
 export const CategoryHistoryModal: React.FC<CategoryHistoryModalProps> = ({
@@ -25,6 +26,7 @@ export const CategoryHistoryModal: React.FC<CategoryHistoryModalProps> = ({
   onAddExpenseForCategory,
   onEditExpense,
   onDeleteExpense,
+  onDeleteCategory,
 }) => {
   if (!isOpen || !category) return null;
 
@@ -75,12 +77,26 @@ export const CategoryHistoryModal: React.FC<CategoryHistoryModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            {onDeleteCategory && (
+              <button
+                onClick={() => {
+                  onDeleteCategory(category.id);
+                  onClose();
+                }}
+                className="p-2 rounded-xl text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer"
+                title="Delete this category"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Total Spent Banner */}

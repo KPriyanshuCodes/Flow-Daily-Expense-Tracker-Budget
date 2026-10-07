@@ -93,10 +93,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           showToast('Data imported successfully! Reloading...');
           setTimeout(() => window.location.reload(), 1000);
         } else {
-          alert('Invalid backup file format.');
+          showToast('Invalid backup file format.');
         }
       } catch (err) {
-        alert('Failed to parse backup JSON file.');
+        showToast('Failed to parse backup JSON file.');
       }
     };
     reader.readAsText(file);

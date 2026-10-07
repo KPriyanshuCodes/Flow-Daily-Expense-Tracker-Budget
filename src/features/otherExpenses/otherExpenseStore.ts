@@ -5,10 +5,10 @@ import { otherExpenseRepository } from '@/database/otherExpenseRepository';
 interface OtherExpenseState {
   otherExpenses: Expense[];
   loadOtherExpenses: () => void;
-  addOtherExpense: (data: { amount: number; categoryId: string; date: string; note?: string }) => Expense;
+  addOtherExpense: (data: { amount: number; name?: string; description?: string; categoryId?: string; date: string; note?: string }) => Expense;
   updateOtherExpense: (
     id: string,
-    updates: Partial<{ amount: number; categoryId: string; date: string; note?: string }>
+    updates: Partial<{ amount: number; name?: string; description?: string; categoryId?: string; date: string; note?: string }>
   ) => boolean;
   deleteOtherExpense: (id: string) => boolean;
 }

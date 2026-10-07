@@ -4,7 +4,7 @@ import { formatCurrency } from '@/utils/currency';
 import { formatDatePretty } from '@/utils/date';
 
 export interface DeleteTarget {
-  type: 'expense' | 'other_expense' | 'category';
+  type: 'expense' | 'other_expense' | 'category' | 'other_category';
   id: string;
   name?: string;
   amount?: number;
@@ -30,10 +30,10 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   if (!target) return null;
 
   const isExpense = target.type === 'expense' || target.type === 'other_expense';
-  const isCategory = target.type === 'category';
+  const isCategory = target.type === 'category' || target.type === 'other_category';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-sm animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-sm animate-in fade-in duration-150">
       <div className="relative w-full max-w-sm bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden border border-white/90 p-5 flex flex-col gap-4 animate-in zoom-in-95 duration-150">
         {/* Top Header */}
         <div className="flex items-start justify-between">
@@ -51,8 +51,10 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
         {/* Title & Description */}
         <div>
           <h3 className="text-base font-bold text-neutral-900 tracking-tight">
-            {isCategory
-              ? `Delete Category?`
+            {target.type === 'other_category'
+              ? 'Delete Other Category?'
+              : isCategory
+              ? 'Delete Category?'
               : target.type === 'other_expense'
               ? 'Delete Other Expense?'
               : 'Delete Expense?'}
@@ -94,13 +96,12 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
                 <div className="p-2.5 bg-neutral-100/70 rounded-xl border border-neutral-200/60 text-[11px] text-neutral-600 leading-normal flex items-start gap-1.5">
                   <AlertCircle className="w-3.5 h-3.5 text-neutral-700 shrink-0 mt-0.5" />
                   <span>
-                    Historical expenses will be safely preserved under{' '}
-                    <strong className="text-neutral-900 font-semibold">Uncategorized</strong> so your totals and financial history remain 100% accurate.
+                    This category and its <strong className="text-neutral-900 font-semibold">{target.usageCount} linked expense{target.usageCount === 1 ? '' : 's'}</strong> will be permanently removed. Unrelated categories and expenses will not be affected.
                   </span>
                 </div>
               ) : (
                 <p className="text-xs text-neutral-500">
-                  This category will be permanently removed.
+                  This category has no expenses and will be permanently removed.
                 </p>
               )}
             </div>

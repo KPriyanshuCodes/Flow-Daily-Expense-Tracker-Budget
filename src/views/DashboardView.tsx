@@ -40,8 +40,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     }
   };
 
-  // Only categories that have expenses in this selected month
-  const activeCategories = summary.categories
+  // Only categories that have at least one personal expense in this selected month
+  const activePersonalCategories = summary.categories
     .filter((c) => c.totalAmount > 0)
     .sort((a, b) => b.totalAmount - a.totalAmount);
 
@@ -76,17 +76,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         <span className="text-xs text-neutral-500 font-medium">
-          {summary.transactionCount} {summary.transactionCount === 1 ? 'expense' : 'expenses'}
+          {summary.transactionCount} {summary.transactionCount === 1 ? 'personal expense' : 'personal expenses'}
         </span>
       </div>
 
-      {/* Hero: Total Spending Glass Card */}
-      <div className="bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] rounded-3xl p-5 sm:p-6 flex flex-col">
+      {/* Hero: Personal Spending Glass Card */}
+      <div className="bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] rounded-3xl p-5 sm:p-6 flex flex-col">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-            Total Spending
-          </span>
-          <span className="text-[11px] font-medium text-neutral-600 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200/60">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
+              Personal Spending
+            </span>
+          </div>
+          <span className="text-[11px] font-semibold text-neutral-600 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200/60">
             {summary.monthLabel}
           </span>
         </div>
@@ -97,7 +99,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </span>
         </div>
 
-        {/* Primary Add Expense CTA */}
+        {/* Prominent + Add Expense Button on Dashboard */}
         <button
           onClick={() => onAddExpense()}
           className="mt-6 w-full py-3.5 px-4 rounded-2xl bg-neutral-900 hover:bg-neutral-800 active:scale-[0.99] text-white text-xs sm:text-sm font-semibold shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px]"
@@ -107,21 +109,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </button>
       </div>
 
-      {/* Category Spending Section - Shows ONLY categories with expenses */}
+      {/* Personal Category Spending Section - Shows ONLY categories with expenses */}
       <div className="bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] rounded-3xl p-4 sm:p-5 flex flex-col gap-3">
         <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
           <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-            Category Spending
+            Personal Categories
           </span>
           <span className="text-[11px] text-neutral-400 font-medium">
-            {activeCategories.length} {activeCategories.length === 1 ? 'active category' : 'active categories'}
+            {activePersonalCategories.length} {activePersonalCategories.length === 1 ? 'active category' : 'active categories'}
           </span>
         </div>
 
-        {activeCategories.length === 0 ? (
+        {activePersonalCategories.length === 0 ? (
           <div className="py-8 text-center flex flex-col items-center justify-center gap-2.5">
             <p className="text-xs text-neutral-400">
-              No expenses recorded for this month yet.
+              No personal expenses recorded for this month yet.
             </p>
             <button
               onClick={() => onAddExpense()}
@@ -132,12 +134,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
-            {activeCategories.map((item) => (
+            {activePersonalCategories.map((item) => (
               <div
                 key={item.categoryId}
                 onClick={() => onViewCategoryHistory && onViewCategoryHistory(item.categoryId)}
                 className="p-3 sm:p-3.5 rounded-2xl bg-neutral-50/70 hover:bg-white border border-neutral-200/50 hover:border-neutral-300 shadow-2xs hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between gap-2.5 group"
-                title="View detailed expense history"
+                title="View detailed category expense history"
               >
                 <div className="flex items-center justify-between gap-3">
                   {/* Category Icon & Name */}
@@ -170,7 +172,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onAddExpense(item.categoryId);
                       }}
                       className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white hover:bg-neutral-900 hover:text-white text-neutral-700 flex items-center justify-center transition-all cursor-pointer active:scale-95 border border-neutral-200/50 shadow-2xs"
-                      title={`Quick add expense in ${item.categoryName}`}
+                      title={`Add expense in ${item.categoryName}`}
                     >
                       <Plus className="w-3.5 h-3.5 stroke-2" />
                     </button>
@@ -204,3 +206,5 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     </div>
   );
 };
+
+export default DashboardView;

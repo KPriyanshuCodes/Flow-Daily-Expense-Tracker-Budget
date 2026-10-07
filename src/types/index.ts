@@ -17,6 +17,8 @@ export interface Expense {
   date: string; // YYYY-MM-DD
   monthKey: string; // YYYY-MM
   note?: string;
+  name?: string; // Optional name/description for Other Expenses
+  isOther?: boolean; // Tag for Other Expenses
   createdAt: string;
 }
 

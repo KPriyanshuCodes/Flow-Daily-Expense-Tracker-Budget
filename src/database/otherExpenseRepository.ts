@@ -1,22 +1,27 @@
 import { storage, DB_STORAGE_KEYS } from './database';
 import { Expense, CategorySummary } from '@/types';
 import { getMonthKey } from '@/utils/date';
-import { categoryRepository } from './categoryRepository';
+import { otherCategoryRepository } from './otherCategoryRepository';
 
 export const otherExpenseRepository = {
   getAll(): Expense[] {
-    const items = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
-    const categories = categoryRepository.getAll();
-    const catMap = new Map(categories.map((c) => [c.id, c]));
+    const rawItems = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
+    const items = Array.isArray(rawItems) ? rawItems : [];
+    const otherCategories = otherCategoryRepository.getAll();
+    const catMap = new Map(otherCategories.map((c) => [c.id, c]));
 
     return items
       .map((e) => {
-        const cat = catMap.get(e.categoryId);
+        const cat = e.categoryId ? catMap.get(e.categoryId) : undefined;
+        const displayName = (e.name || cat?.name || e.note || 'Other Expense').trim();
         return {
           ...e,
-          categoryName: cat?.name || 'Uncategorized',
-          categoryIcon: cat?.icon || 'ShoppingCart',
-          categoryColor: cat?.color || '#64748b',
+          name: displayName,
+          note: e.note || undefined,
+          categoryName: cat?.name || e.categoryName || 'Other Expense',
+          categoryIcon: cat?.icon || e.categoryIcon || 'Layers',
+          categoryColor: cat?.color || e.categoryColor || '#71717a',
+          isOther: true,
         };
       })
       .sort((a, b) => {
@@ -28,70 +33,101 @@ export const otherExpenseRepository = {
   },
 
   getById(id: string): Expense | undefined {
-    return this.getAll().find((e) => e.id === id);
+    const cleanId = String(id || '').trim();
+    return this.getAll().find((e) => String(e.id).trim() === cleanId);
   },
 
-  create(data: { amount: number; categoryId: string; date: string; note?: string }): Expense {
-    const items = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
+  create(data: {
+    amount: number;
+    categoryId?: string;
+    name?: string;
+    description?: string;
+    date: string;
+    note?: string;
+  }): Expense {
+    const rawItems = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
+    const items = Array.isArray(rawItems) ? rawItems : [];
     const monthKey = getMonthKey(data.date);
+    const catId = data.categoryId || 'other';
+    const cat = otherCategoryRepository.getById(catId);
+    const customName = data.name?.trim() || data.description?.trim();
+    const expName = customName || cat?.name || data.note?.trim() || 'Other Expense';
 
     const newExpense: Expense = {
       id: `oth-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       amount: Math.round(data.amount * 100) / 100,
-      categoryId: data.categoryId,
+      categoryId: catId,
+      name: expName,
       date: data.date,
       monthKey,
       note: data.note?.trim() || undefined,
+      categoryName: cat?.name || 'Other Expense',
+      categoryIcon: cat?.icon || 'Layers',
+      categoryColor: cat?.color || '#71717a',
+      isOther: true,
       createdAt: new Date().toISOString(),
     };
 
     items.push(newExpense);
     storage.set(DB_STORAGE_KEYS.OTHER_EXPENSES, items);
 
-    const cat = categoryRepository.getById(newExpense.categoryId);
-    return {
-      ...newExpense,
-      categoryName: cat?.name || 'Uncategorized',
-      categoryIcon: cat?.icon || 'ShoppingCart',
-      categoryColor: cat?.color || '#64748b',
-    };
+    return newExpense;
   },
 
   update(
     id: string,
-    updates: Partial<{ amount: number; categoryId: string; date: string; note?: string }>
+    updates: Partial<{
+      amount: number;
+      categoryId?: string;
+      name?: string;
+      description?: string;
+      date: string;
+      note?: string;
+    }>
   ): Expense | null {
-    const items = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
-    const idx = items.findIndex((e) => e.id === id);
+    const cleanId = String(id || '').trim();
+    const rawItems = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
+    const items = Array.isArray(rawItems) ? rawItems : [];
+    const idx = items.findIndex((e) => String(e.id).trim() === cleanId);
     if (idx === -1) return null;
 
     const current = items[idx];
     const newDate = updates.date ?? current.date;
     const newMonthKey = updates.date ? getMonthKey(updates.date) : current.monthKey;
+    const newCatId = updates.categoryId ?? current.categoryId;
+    const cat = otherCategoryRepository.getById(newCatId);
+
+    const newName =
+      updates.name !== undefined
+        ? (updates.name.trim() || cat?.name || 'Other Expense')
+        : updates.description !== undefined
+        ? (updates.description.trim() || cat?.name || 'Other Expense')
+        : current.name || cat?.name || 'Other Expense';
 
     items[idx] = {
       ...current,
       ...updates,
+      categoryId: newCatId,
+      name: newName,
       amount: updates.amount !== undefined ? Math.round(updates.amount * 100) / 100 : current.amount,
       monthKey: newMonthKey,
       date: newDate,
       note: updates.note !== undefined ? updates.note.trim() || undefined : current.note,
+      categoryName: cat?.name || current.categoryName || 'Other Expense',
+      categoryIcon: cat?.icon || current.categoryIcon || 'Layers',
+      categoryColor: cat?.color || current.categoryColor || '#71717a',
+      isOther: true,
     };
 
     storage.set(DB_STORAGE_KEYS.OTHER_EXPENSES, items);
 
-    const cat = categoryRepository.getById(items[idx].categoryId);
-    return {
-      ...items[idx],
-      categoryName: cat?.name || 'Uncategorized',
-      categoryIcon: cat?.icon || 'ShoppingCart',
-      categoryColor: cat?.color || '#64748b',
-    };
+    return items[idx];
   },
 
   delete(id: string): boolean {
+    const cleanId = String(id || '').trim();
     const items = storage.get<Expense[]>(DB_STORAGE_KEYS.OTHER_EXPENSES, []);
-    const filtered = items.filter((e) => e.id !== id);
+    const filtered = items.filter((e) => String(e.id).trim() !== cleanId);
     if (filtered.length === items.length) return false;
     storage.set(DB_STORAGE_KEYS.OTHER_EXPENSES, filtered);
     return true;
@@ -101,7 +137,7 @@ export const otherExpenseRepository = {
     const expenses = filteredExpenses ?? this.getAll();
     const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
 
-    const categories = categoryRepository.getAll();
+    const categories = otherCategoryRepository.getAll();
     const catMap = new Map(categories.map((c) => [c.id, c]));
 
     const catTotalMap = new Map<string, { total: number; count: number }>();
@@ -119,9 +155,9 @@ export const otherExpenseRepository = {
         const percentage = totalSpent > 0 ? Math.round((data.total / totalSpent) * 1000) / 10 : 0;
         return {
           categoryId: catId,
-          categoryName: cat?.name || 'Uncategorized',
-          categoryIcon: cat?.icon || 'ShoppingCart',
-          categoryColor: cat?.color || '#64748b',
+          categoryName: cat?.name || 'Other Expense',
+          categoryIcon: cat?.icon || 'Layers',
+          categoryColor: cat?.color || '#71717a',
           totalAmount: data.total,
           percentage,
           transactionCount: data.count,
