@@ -243,30 +243,30 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
   const completedItems = items.filter((i) => i.completed);
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#F6F6F8] flex flex-col overflow-hidden animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 bg-[#F7F7F5] flex flex-col overflow-hidden animate-in fade-in duration-150">
       {/* Dedicated Full-Screen Top Header */}
-      <header className="sticky top-0 z-30 bg-white/85 backdrop-blur-xl border-b border-neutral-200/60 px-4 sm:px-6 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-[#F7F7F5]/90 backdrop-blur-xl border-b border-[#EAEAEA] px-4 sm:px-6 py-3 flex items-center justify-between">
         {/* Top-Left: Back Arrow */}
         <div className="flex items-center gap-2">
           <button
             onClick={handleBack}
-            className="p-2 -ml-2 rounded-xl text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer flex items-center gap-1.5"
+            className="p-2 -ml-2 rounded-xl text-[#1A1A1A] hover:bg-[#EBEBE8] transition-colors cursor-pointer flex items-center gap-1.5"
             title="Back to notes"
           >
             <ArrowLeft className="w-5 h-5 stroke-2" />
-            <span className="text-xs font-semibold hidden sm:inline text-neutral-700">Notes</span>
+            <span className="text-xs font-semibold hidden sm:inline text-[#1A1A1A]">Notes</span>
           </button>
         </div>
 
         {/* Center: Format Switcher (Note vs Checklist) */}
-        <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-xl border border-neutral-200/60">
+        <div className="flex items-center gap-1 bg-[#EBEBE8] p-1 rounded-xl border border-[#DFDFDA]">
           <button
             type="button"
             onClick={handleToggleType}
             className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               type === 'text'
-                ? 'bg-white text-neutral-900 shadow-2xs'
-                : 'text-neutral-500 hover:text-neutral-900'
+                ? 'bg-[#FFFFFF] text-[#1A1A1A] shadow-2xs font-bold'
+                : 'text-[#8A8A8A] hover:text-[#1A1A1A]'
             }`}
             title="Convert to standard text note"
           >
@@ -279,8 +279,8 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
             onClick={handleToggleType}
             className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               type === 'checklist'
-                ? 'bg-white text-neutral-900 shadow-2xs'
-                : 'text-neutral-500 hover:text-neutral-900'
+                ? 'bg-[#FFFFFF] text-[#1A1A1A] shadow-2xs font-bold'
+                : 'text-[#8A8A8A] hover:text-[#1A1A1A]'
             }`}
             title="Convert to checklist with interactive checkboxes"
           >
@@ -295,8 +295,8 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
             onClick={handleTogglePin}
             className={`p-2 rounded-xl transition-all cursor-pointer ${
               isPinned
-                ? 'bg-neutral-900 text-white shadow-2xs'
-                : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100'
+                ? 'bg-[#C47A2C] text-white shadow-2xs'
+                : 'text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#EBEBE8]'
             }`}
             title={isPinned ? 'Pinned note (click to unpin)' : 'Pin note to top'}
           >
@@ -306,7 +306,7 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
           {todo && onDelete && (
             <button
               onClick={handleDelete}
-              className="p-2 rounded-xl text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer"
+              className="p-2 rounded-xl text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#EBEBE8] transition-colors cursor-pointer"
               title="Delete note"
             >
               <Trash2 className="w-4 h-4" />
@@ -338,7 +338,7 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
               }
             }
           }}
-          className="w-full text-2xl sm:text-3xl md:text-4xl font-extrabold text-neutral-900 placeholder:text-neutral-300 bg-transparent border-none outline-none leading-tight mb-4 tracking-tight"
+          className="w-full text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1A1A1A] placeholder-[#C0C0BA] bg-transparent border-none outline-none leading-tight mb-4 tracking-tight"
         />
 
         {/* Format: Standard Text Note */}
@@ -348,7 +348,7 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
             placeholder="Note..."
             value={content}
             onChange={handleContentChange}
-            className="w-full flex-1 min-h-[50vh] text-base sm:text-lg text-neutral-800 placeholder:text-neutral-400 bg-transparent border-none outline-none resize-none leading-relaxed font-normal"
+            className="w-full flex-1 min-h-[50vh] text-base sm:text-lg text-[#1A1A1A] placeholder-[#8A8A8A] bg-transparent border-none outline-none resize-none leading-relaxed font-normal"
           />
         )}
 
@@ -360,16 +360,16 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
               {activeItems.map((item, idx) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 py-1 px-1.5 rounded-xl hover:bg-neutral-100/60 transition-colors group"
+                  className="flex items-center gap-3 py-1 px-1.5 rounded-xl hover:bg-[#EFEFEA] transition-colors group"
                 >
                   {/* Interactive Checkbox */}
                   <button
                     type="button"
                     onClick={() => handleToggleItemCheck(item.id)}
-                    className="w-5 h-5 rounded-md border border-neutral-300 hover:border-neutral-800 bg-white flex items-center justify-center transition-all cursor-pointer shrink-0"
+                    className="w-5 h-5 rounded-md border border-[#D0D0CB] hover:border-[#C47A2C] bg-[#FFFFFF] flex items-center justify-center transition-all cursor-pointer shrink-0"
                     title="Mark as completed"
                   >
-                    {item.completed && <Check className="w-3.5 h-3.5 stroke-3 text-neutral-900" />}
+                    {item.completed && <Check className="w-3.5 h-3.5 stroke-3 text-white" />}
                   </button>
 
                   {/* Editable Item Text */}
@@ -382,14 +382,14 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
                     placeholder="List item..."
                     onChange={(e) => handleUpdateItemText(item.id, e.target.value)}
                     onKeyDown={(e) => handleItemKeyDown(e, idx, item)}
-                    className="flex-1 text-sm sm:text-base text-neutral-900 placeholder:text-neutral-300 bg-transparent outline-none font-medium leading-normal"
+                    className="flex-1 text-sm sm:text-base text-[#1A1A1A] placeholder-[#C0C0BA] bg-transparent outline-none font-medium leading-normal"
                   />
 
                   {/* Remove Button */}
                   <button
                     type="button"
                     onClick={() => handleRemoveChecklistItem(item.id)}
-                    className="p-1 rounded-lg text-neutral-300 hover:text-neutral-800 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+                    className="p-1 rounded-lg text-[#8A8A8A] hover:text-[#1A1A1A] opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
                     title="Remove item"
                   >
                     <X className="w-4 h-4" />
@@ -400,7 +400,7 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
 
             {/* Quick Add Row for Checklist */}
             <div className="flex items-center gap-3 py-1.5 px-1.5 mt-1">
-              <div className="w-5 h-5 rounded-md border border-dashed border-neutral-300 flex items-center justify-center text-neutral-400 shrink-0">
+              <div className="w-5 h-5 rounded-md border border-dashed border-[#C0C0BA] flex items-center justify-center text-[#8A8A8A] shrink-0">
                 <Plus className="w-3.5 h-3.5 stroke-2" />
               </div>
               <input
@@ -419,17 +419,17 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
                     handleAddChecklistItem();
                   }
                 }}
-                className="flex-1 text-sm sm:text-base text-neutral-900 placeholder:text-neutral-400 bg-transparent outline-none font-normal"
+                className="flex-1 text-sm sm:text-base text-[#1A1A1A] placeholder-[#8A8A8A] bg-transparent outline-none font-normal"
               />
             </div>
 
             {/* Completed Items Section */}
             {completedItems.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-neutral-200/60 flex flex-col gap-2">
+              <div className="mt-6 pt-4 border-t border-[#EAEAEA] flex flex-col gap-2">
                 <button
                   type="button"
                   onClick={() => setShowCompleted(!showCompleted)}
-                  className="flex items-center gap-2 text-xs font-bold text-neutral-500 uppercase tracking-wider cursor-pointer hover:text-neutral-800 transition-colors w-fit py-1"
+                  className="flex items-center gap-2 text-xs font-bold text-[#8A8A8A] uppercase tracking-wider cursor-pointer hover:text-[#1A1A1A] transition-colors w-fit py-1"
                 >
                   {showCompleted ? (
                     <ChevronDown className="w-4 h-4" />
@@ -446,13 +446,13 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
                     {completedItems.map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 py-1 px-1.5 rounded-xl hover:bg-neutral-100/60 transition-colors group opacity-60 hover:opacity-100"
+                        className="flex items-center gap-3 py-1 px-1.5 rounded-xl hover:bg-[#EFEFEA] transition-colors group opacity-75 hover:opacity-100"
                       >
-                        {/* Checked Box */}
+                        {/* Checked Box with Burnt Amber Accent */}
                         <button
                           type="button"
                           onClick={() => handleToggleItemCheck(item.id)}
-                          className="w-5 h-5 rounded-md bg-neutral-900 border border-neutral-900 text-white flex items-center justify-center transition-all cursor-pointer shrink-0"
+                          className="w-5 h-5 rounded-md bg-[#C47A2C] border border-[#C47A2C] text-white flex items-center justify-center transition-all cursor-pointer shrink-0"
                           title="Mark as uncompleted"
                         >
                           <Check className="w-3.5 h-3.5 stroke-3" />
@@ -463,14 +463,14 @@ export const FullScreenTodoEditor: React.FC<FullScreenTodoEditorProps> = ({
                           type="text"
                           value={item.text}
                           onChange={(e) => handleUpdateItemText(item.id, e.target.value)}
-                          className="flex-1 text-sm sm:text-base line-through text-neutral-400 bg-transparent outline-none font-normal"
+                          className="flex-1 text-sm sm:text-base line-through text-[#8A8A8A] bg-transparent outline-none font-normal"
                         />
 
                         {/* Delete Button */}
                         <button
                           type="button"
                           onClick={() => handleRemoveChecklistItem(item.id)}
-                          className="p-1 rounded-lg text-neutral-300 hover:text-neutral-800 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+                          className="p-1 rounded-lg text-[#8A8A8A] hover:text-[#1A1A1A] opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
                           title="Remove item"
                         >
                           <X className="w-4 h-4" />

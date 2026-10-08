@@ -304,14 +304,14 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F6F8] text-neutral-900 flex justify-center selection:bg-neutral-900 selection:text-white relative overflow-x-hidden">
-      {/* Subtle ambient glass backlight */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-96 bg-gradient-to-b from-white via-neutral-100/40 to-transparent pointer-events-none blur-3xl -z-10" />
+    <div className="min-h-screen bg-[#F7F7F5] text-[#1A1A1A] flex justify-center selection:bg-[#C47A2C]/20 selection:text-[#1A1A1A] relative overflow-x-hidden">
+      {/* Subtle ambient warm backlight */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-96 bg-gradient-to-b from-[#C47A2C]/3 via-transparent to-transparent pointer-events-none blur-3xl -z-10" />
 
       {/* Main Container - Responsive across Mobile, Tablet, Laptop, and Desktop */}
-      <div className="w-full max-w-md sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl min-h-screen bg-[#F6F6F8] border-x border-neutral-200/50 flex flex-col relative shadow-[0_10px_40px_rgba(0,0,0,0.02)] mx-auto">
+      <div className="w-full max-w-md sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl min-h-screen bg-[#F7F7F5] border-x border-[#EAEAEA]/80 flex flex-col relative shadow-[0_4px_30px_rgba(0,0,0,0.02)] mx-auto">
         {/* Top Header with Light Glass & Clean Three-Line Hamburger Menu (☰) */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-neutral-200/60 px-4 sm:px-6 md:px-8 py-3.5 flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-[#F7F7F5]/90 backdrop-blur-xl border-b border-[#EAEAEA] px-4 sm:px-6 md:px-8 py-3.5 flex items-center justify-between">
           <div
             onClick={() => setActiveTab('dashboard')}
             className="flex items-center gap-2.5 cursor-pointer group select-none"
@@ -319,7 +319,7 @@ export const App: React.FC = () => {
           >
             <AppLogo className="w-9 h-9 shadow-xs group-hover:scale-105 transition-transform" />
             <div>
-              <h1 className="text-base font-extrabold text-neutral-900 tracking-tight leading-tight lowercase">
+              <h1 className="text-base font-extrabold text-[#1A1A1A] tracking-tight leading-tight lowercase">
                 flow
               </h1>
             </div>
@@ -331,7 +331,7 @@ export const App: React.FC = () => {
             {/* Clean Three-Line Hamburger Menu Button (☰) */}
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="w-10 h-10 rounded-2xl bg-white/90 hover:bg-neutral-100 border border-neutral-200/70 text-neutral-800 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="w-10 h-10 rounded-2xl bg-[#FFFFFF] hover:bg-[#F2F2EF] border border-[#E5E5E2] text-[#1A1A1A] flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
               aria-label="Open menu"
               title="Menu"
             >
@@ -345,14 +345,14 @@ export const App: React.FC = () => {
           <div className="fixed inset-0 z-50 flex justify-end animate-in fade-in duration-200">
             {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm transition-opacity"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
               onClick={() => setIsMenuOpen(false)}
             />
 
             {/* Drawer Content */}
-            <div className="relative w-full max-w-xs sm:max-w-sm bg-white/95 backdrop-blur-2xl h-full shadow-2xl border-l border-neutral-200/70 flex flex-col z-10 animate-in slide-in-from-right duration-200">
+            <div className="relative w-full max-w-xs sm:max-w-sm bg-[#FFFFFF] h-full shadow-2xl border-l border-[#EAEAEA] flex flex-col z-10 animate-in slide-in-from-right duration-200">
               {/* Drawer Header */}
-              <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-100">
+              <div className="flex items-center justify-between px-6 py-5 border-b border-[#EAEAEA]">
                 <div
                   onClick={() => {
                     setActiveTab('dashboard');
@@ -361,13 +361,13 @@ export const App: React.FC = () => {
                   className="flex items-center gap-2.5 cursor-pointer"
                 >
                   <AppLogo className="w-8 h-8 shadow-xs" />
-                  <span className="text-base font-extrabold text-neutral-900 tracking-tight lowercase">
+                  <span className="text-base font-extrabold text-[#1A1A1A] tracking-tight lowercase">
                     flow
                   </span>
                 </div>
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-2 rounded-xl text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer"
+                  className="p-2 rounded-xl text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F7F7F5] transition-colors cursor-pointer"
                   title="Close menu"
                 >
                   <X className="w-5 h-5" />
@@ -383,8 +383,8 @@ export const App: React.FC = () => {
                   }}
                   className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-all cursor-pointer ${
                     activeTab === 'dashboard'
-                      ? 'bg-neutral-900 text-white font-bold shadow-xs'
-                      : 'text-neutral-700 hover:bg-neutral-100 font-medium'
+                      ? 'bg-[#C47A2C]/10 text-[#C47A2C] font-bold border border-[#C47A2C]/20 shadow-xs'
+                      : 'text-[#1A1A1A] hover:bg-[#F7F7F5] font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -400,8 +400,8 @@ export const App: React.FC = () => {
                   }}
                   className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-all cursor-pointer ${
                     activeTab === 'todo'
-                      ? 'bg-neutral-900 text-white font-bold shadow-xs'
-                      : 'text-neutral-700 hover:bg-neutral-100 font-medium'
+                      ? 'bg-[#C47A2C]/10 text-[#C47A2C] font-bold border border-[#C47A2C]/20 shadow-xs'
+                      : 'text-[#1A1A1A] hover:bg-[#F7F7F5] font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -412,8 +412,8 @@ export const App: React.FC = () => {
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                         activeTab === 'todo'
-                          ? 'bg-neutral-800 text-white'
-                          : 'bg-neutral-100 text-neutral-600'
+                          ? 'bg-[#C47A2C] text-white'
+                          : 'bg-[#F0F0ED] text-[#8A8A8A]'
                       }`}
                     >
                       {todos.length}
@@ -428,8 +428,8 @@ export const App: React.FC = () => {
                   }}
                   className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-all cursor-pointer ${
                     activeTab === 'other_expenses'
-                      ? 'bg-neutral-900 text-white font-bold shadow-xs'
-                      : 'text-neutral-700 hover:bg-neutral-100 font-medium'
+                      ? 'bg-[#C47A2C]/10 text-[#C47A2C] font-bold border border-[#C47A2C]/20 shadow-xs'
+                      : 'text-[#1A1A1A] hover:bg-[#F7F7F5] font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -440,8 +440,8 @@ export const App: React.FC = () => {
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                         activeTab === 'other_expenses'
-                          ? 'bg-neutral-800 text-white'
-                          : 'bg-neutral-100 text-neutral-600'
+                          ? 'bg-[#C47A2C] text-white'
+                          : 'bg-[#F0F0ED] text-[#8A8A8A]'
                       }`}
                     >
                       {otherExpenses.length}
@@ -456,8 +456,8 @@ export const App: React.FC = () => {
                   }}
                   className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-all cursor-pointer ${
                     activeTab === 'settings'
-                      ? 'bg-neutral-900 text-white font-bold shadow-xs'
-                      : 'text-neutral-700 hover:bg-neutral-100 font-medium'
+                      ? 'bg-[#C47A2C]/10 text-[#C47A2C] font-bold border border-[#C47A2C]/20 shadow-xs'
+                      : 'text-[#1A1A1A] hover:bg-[#F7F7F5] font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -468,9 +468,9 @@ export const App: React.FC = () => {
               </div>
 
               {/* Drawer Footer */}
-              <div className="p-4 border-t border-neutral-100/80 bg-neutral-50/50 flex items-center justify-between text-xs text-neutral-400">
+              <div className="p-4 border-t border-[#EAEAEA] bg-[#FAFAF8] flex items-center justify-between text-xs text-[#8A8A8A]">
                 <span>flow · minimal spending</span>
-                <span className="font-mono">{settings.currency}</span>
+                <span className="font-mono text-[#1A1A1A] font-semibold">{settings.currency}</span>
               </div>
             </div>
           </div>
@@ -534,23 +534,23 @@ export const App: React.FC = () => {
 
         {/* Manage Categories Sub-View Overlay Modal (Personal Categories) */}
         {isManageCategoriesOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-900/30 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="relative w-full max-w-md sm:max-w-2xl md:max-w-3xl bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(28,25,23,0.12)] overflow-hidden border border-white/95 flex flex-col max-h-[92vh]">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 bg-white/60">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="relative w-full max-w-md sm:max-w-2xl md:max-w-3xl bg-[#FFFFFF] rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.08)] overflow-hidden border border-[#EAEAEA] flex flex-col max-h-[92vh]">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-[#EAEAEA] bg-[#FAFAF8]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-800">
-                    <Tag className="w-4 h-4" />
+                  <div className="w-9 h-9 rounded-xl bg-[#F0F0ED] border border-[#E5E5E2] flex items-center justify-center text-[#1A1A1A]">
+                    <Tag className="w-4 h-4 text-[#C47A2C]" />
                   </div>
                   <div>
-                    <h2 className="text-base font-bold text-neutral-900">Manage Categories</h2>
-                    <p className="text-[11px] text-neutral-500 font-normal">
+                    <h2 className="text-base font-bold text-[#1A1A1A]">Manage Categories</h2>
+                    <p className="text-[11px] text-[#8A8A8A] font-normal">
                       Customize icons, names, and active status
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsManageCategoriesOpen(false)}
-                  className="p-2 rounded-xl text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer"
+                  className="p-2 rounded-xl text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F0F0ED] transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>

@@ -16,10 +16,10 @@ export const PWAInstallButton: React.FC = () => {
     return (
       <button
         onClick={install}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold transition-all active:scale-95 cursor-pointer border border-neutral-300/60"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAFAF8] hover:bg-[#F2F2EF] text-[#1A1A1A] text-xs font-semibold transition-all active:scale-95 cursor-pointer border border-[#E5E5E2]"
         title="Install Flow as App"
       >
-        <Download className="w-3.5 h-3.5 text-neutral-700" />
+        <Download className="w-3.5 h-3.5 text-[#C47A2C]" />
         <span>Install</span>
       </button>
     );
@@ -31,51 +31,51 @@ export const PWAInstallButton: React.FC = () => {
       <>
         <button
           onClick={() => setShowIOSGuide(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold transition-all active:scale-95 cursor-pointer border border-neutral-300/60"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAFAF8] hover:bg-[#F2F2EF] text-[#1A1A1A] text-xs font-semibold transition-all active:scale-95 cursor-pointer border border-[#E5E5E2]"
           title="Install Flow on iOS"
         >
-          <Download className="w-3.5 h-3.5 text-neutral-700" />
+          <Download className="w-3.5 h-3.5 text-[#C47A2C]" />
           <span>Install</span>
         </button>
 
         {showIOSGuide && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
-            <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-neutral-200 flex flex-col gap-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in">
+            <div className="w-full max-w-sm rounded-3xl bg-[#FFFFFF] p-6 shadow-2xl border border-[#EAEAEA] flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-neutral-900">Install Flow on iPhone / iPad</h3>
+                <h3 className="text-base font-bold text-[#1A1A1A]">Install Flow on iPhone / iPad</h3>
                 <button
                   onClick={() => setShowIOSGuide(false)}
-                  className="p-1 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 cursor-pointer"
+                  className="p-1 rounded-full text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F0F0ED] cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex flex-col gap-3 text-xs text-neutral-600">
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-2xl border border-neutral-200/60">
-                  <div className="p-2 bg-white rounded-xl shadow-xs text-neutral-800 shrink-0">
+              <div className="flex flex-col gap-3 text-xs text-[#8A8A8A]">
+                <div className="flex items-start gap-3 p-3 bg-[#FAFAF8] rounded-2xl border border-[#E5E5E2]">
+                  <div className="p-2 bg-[#FFFFFF] rounded-xl shadow-xs text-[#C47A2C] shrink-0 border border-[#E5E5E2]">
                     <Share className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="font-semibold text-neutral-900 block">Step 1: Tap Share</span>
+                    <span className="font-semibold text-[#1A1A1A] block">Step 1: Tap Share</span>
                     In Safari toolbar at the bottom of the screen, tap the Share icon.
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-2xl border border-neutral-200/60">
-                  <div className="p-2 bg-white rounded-xl shadow-xs text-neutral-800 shrink-0">
+                <div className="flex items-start gap-3 p-3 bg-[#FAFAF8] rounded-2xl border border-[#E5E5E2]">
+                  <div className="p-2 bg-[#FFFFFF] rounded-xl shadow-xs text-[#C47A2C] shrink-0 border border-[#E5E5E2]">
                     <PlusSquare className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="font-semibold text-neutral-900 block">Step 2: Add to Home Screen</span>
-                    Scroll down in the share menu and select <strong>Add to Home Screen</strong>.
+                    <span className="font-semibold text-[#1A1A1A] block">Step 2: Add to Home Screen</span>
+                    Scroll down in the share menu and select <strong className="text-[#1A1A1A]">Add to Home Screen</strong>.
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => setShowIOSGuide(false)}
-                className="w-full py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-[#C47A2C] hover:bg-[#B36E25] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
               >
                 Got It
               </button>

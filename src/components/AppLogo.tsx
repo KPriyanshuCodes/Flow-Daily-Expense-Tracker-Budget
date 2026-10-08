@@ -11,7 +11,7 @@ export const AppLogo: React.FC<AppLogoProps> = ({ className = 'w-9 h-9', size })
 
   return (
     <div
-      className={`relative rounded-2xl overflow-hidden shadow-xs border border-neutral-800 bg-[#111214] flex items-center justify-center shrink-0 select-none ${className}`}
+      className={`relative rounded-2xl overflow-hidden shadow-2xs border border-[#E5E5E2] bg-[#FFFFFF] flex items-center justify-center shrink-0 select-none ${className}`}
       style={size ? { width: size, height: size } : undefined}
     >
       <img

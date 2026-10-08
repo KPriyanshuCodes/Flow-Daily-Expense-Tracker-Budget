@@ -29,17 +29,17 @@ export const TodoCard: React.FC<TodoCardProps> = ({
   return (
     <div
       onClick={() => onEdit(todo)}
-      className="group relative bg-white/75 hover:bg-white/95 backdrop-blur-xl border border-white/80 hover:border-neutral-300/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.04)] rounded-3xl p-4 flex flex-col justify-between transition-all duration-200 cursor-pointer text-left overflow-hidden"
+      className="group relative bg-[#FFFFFF] hover:bg-[#FAFAF8] border border-[#E5E5E2] hover:border-[#D5D5D0] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] rounded-3xl p-4 flex flex-col justify-between transition-all duration-200 cursor-pointer text-left overflow-hidden"
     >
       {/* Top Header: Title and Quick Actions */}
       <div className="flex items-start justify-between gap-2 mb-2.5">
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
           {isChecklist ? (
-            <CheckSquare className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+            <CheckSquare className="w-3.5 h-3.5 text-[#C47A2C] shrink-0" />
           ) : (
-            <FileText className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+            <FileText className="w-3.5 h-3.5 text-[#C47A2C] shrink-0" />
           )}
-          <h3 className="font-bold text-sm text-neutral-900 tracking-tight truncate leading-snug">
+          <h3 className="font-bold text-sm text-[#1A1A1A] tracking-tight truncate leading-snug">
             {todo.title}
           </h3>
         </div>
@@ -54,8 +54,8 @@ export const TodoCard: React.FC<TodoCardProps> = ({
             }}
             className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               todo.isPinned
-                ? 'bg-neutral-900 text-white shadow-2xs'
-                : 'text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 opacity-60 group-hover:opacity-100'
+                ? 'bg-[#C47A2C] text-white shadow-2xs'
+                : 'text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F2F2EF] opacity-60 group-hover:opacity-100'
             }`}
             title={todo.isPinned ? 'Unpin task' : 'Pin to top'}
           >
@@ -68,7 +68,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({
               e.stopPropagation();
               onDelete(todo.id);
             }}
-            className="w-7 h-7 rounded-xl flex items-center justify-center text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 opacity-40 group-hover:opacity-100 transition-all cursor-pointer"
+            className="w-7 h-7 rounded-xl flex items-center justify-center text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F2F2EF] opacity-40 group-hover:opacity-100 transition-all cursor-pointer"
             title="Delete task"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -92,8 +92,8 @@ export const TodoCard: React.FC<TodoCardProps> = ({
                 <div
                   className={`mt-0.5 w-4 h-4 rounded-md border flex items-center justify-center transition-all shrink-0 ${
                     item.completed
-                      ? 'bg-neutral-900 border-neutral-900 text-white'
-                      : 'border-neutral-300 group-hover/item:border-neutral-800 bg-white'
+                      ? 'bg-[#C47A2C] border-[#C47A2C] text-white'
+                      : 'border-[#D0D0CB] group-hover/item:border-[#C47A2C] bg-[#FFFFFF]'
                   }`}
                 >
                   {item.completed && <Check className="w-2.5 h-2.5 stroke-3" />}
@@ -101,8 +101,8 @@ export const TodoCard: React.FC<TodoCardProps> = ({
                 <span
                   className={`text-xs leading-snug transition-colors line-clamp-2 ${
                     item.completed
-                      ? 'line-through text-neutral-400'
-                      : 'text-neutral-700 font-normal'
+                      ? 'line-through text-[#8A8A8A]'
+                      : 'text-[#1A1A1A] font-normal'
                   }`}
                 >
                   {item.text}
@@ -111,20 +111,20 @@ export const TodoCard: React.FC<TodoCardProps> = ({
             ))}
 
             {remainingCount > 0 && (
-              <p className="text-[11px] text-neutral-400 font-medium pl-6 pt-0.5">
+              <p className="text-[11px] text-[#8A8A8A] font-medium pl-6 pt-0.5">
                 +{remainingCount} more {remainingCount === 1 ? 'item' : 'items'}
               </p>
             )}
           </div>
         ) : (
-          <p className="text-xs text-neutral-600 font-normal leading-relaxed line-clamp-4 whitespace-pre-wrap">
-            {todo.content || <span className="italic text-neutral-400">Empty note</span>}
+          <p className="text-xs text-[#1A1A1A] font-normal leading-relaxed line-clamp-4 whitespace-pre-wrap">
+            {todo.content || <span className="italic text-[#8A8A8A]">Empty note</span>}
           </p>
         )}
       </div>
 
       {/* Card Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-neutral-100/80 text-[10px] text-neutral-400 font-medium">
+      <div className="flex items-center justify-between pt-2 border-t border-[#F0F0ED] text-[10px] text-[#8A8A8A] font-medium">
         <span>
           {isChecklist ? (
             `${completedCount}/${totalCount} completed`
@@ -137,9 +137,9 @@ export const TodoCard: React.FC<TodoCardProps> = ({
         </span>
 
         {isChecklist && totalCount > 0 && (
-          <div className="w-14 h-1.5 rounded-full bg-neutral-100 overflow-hidden ml-2">
+          <div className="w-14 h-1.5 rounded-full bg-[#EAEAE6] overflow-hidden ml-2">
             <div
-              className="h-full bg-neutral-900 rounded-full transition-all duration-300"
+              className="h-full bg-[#C47A2C] rounded-full transition-all duration-300"
               style={{
                 width: `${Math.round((completedCount / totalCount) * 100)}%`,
               }}

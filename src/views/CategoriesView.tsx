@@ -39,13 +39,13 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({
     <div className="flex flex-col gap-5 pb-24">
       {/* Header with Add Button & Filter Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 bg-white/60 backdrop-blur-md border border-stone-200/50 p-1 rounded-2xl w-fit">
+        <div className="flex items-center gap-1.5 bg-[#FFFFFF] border border-[#E5E5E2] p-1 rounded-2xl w-fit shadow-2xs">
           <button
             onClick={() => setFilterTab('active')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               filterTab === 'active'
-                ? 'bg-stone-900 text-white shadow-xs'
-                : 'text-stone-600 hover:text-stone-900'
+                ? 'bg-[#C47A2C] text-white shadow-xs'
+                : 'text-[#8A8A8A] hover:text-[#1A1A1A]'
             }`}
           >
             Active ({activeCategories.length})
@@ -54,8 +54,8 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({
             onClick={() => setFilterTab('deactivated')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               filterTab === 'deactivated'
-                ? 'bg-stone-900 text-white shadow-xs'
-                : 'text-stone-600 hover:text-stone-900'
+                ? 'bg-[#C47A2C] text-white shadow-xs'
+                : 'text-[#8A8A8A] hover:text-[#1A1A1A]'
             }`}
           >
             Deactivated ({deactivatedCategories.length})
@@ -64,8 +64,8 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({
             onClick={() => setFilterTab('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               filterTab === 'all'
-                ? 'bg-stone-900 text-white shadow-xs'
-                : 'text-stone-600 hover:text-stone-900'
+                ? 'bg-[#C47A2C] text-white shadow-xs'
+                : 'text-[#8A8A8A] hover:text-[#1A1A1A]'
             }`}
           >
             All ({categories.length})
@@ -74,7 +74,7 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({
 
         <button
           onClick={onCreateCategory}
-          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#C47A2C] hover:bg-[#B36E25] text-white text-xs font-semibold shadow-xs transition-all active:scale-95 cursor-pointer self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5 stroke-2" />
           New Category

@@ -1,3 +1,13 @@
+export const PALETTE = {
+  background: '#F7F7F5',
+  surface: '#FFFFFF',
+  charcoal: '#1A1A1A',
+  secondaryText: '#8A8A8A',
+  burntAmber: '#C47A2C',
+  borderLight: '#EAEAEA',
+  borderMuted: '#E5E5E2',
+};
+
 export const THEME_COLORS = {
   emerald: {
     50: '#ecfdf5',
