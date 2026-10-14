@@ -145,6 +145,5 @@ npx tsc --noEmit
 - Chronological list of all expenses in the selected month.
 
 ### 5. Settings & Data Tools
-- Switch currency symbols (`₹`, `$`, `€`, `£`, `¥`, etc.).
 - View local SQLite storage health and transaction counts.
 - **Seed Demo Expenses**: One-tap populate sample data matching the prompt's `₹2,090` example (`Food ₹850`, `Gas ₹500`, `Milk ₹420`, `Eggs ₹320`) and previous-month entries for instant testing.
