@@ -99,7 +99,6 @@ From the interactive terminal:
 - Press `a` for Android Emulator
 - Press `i` for iOS Simulator
 - Press `w` for Web preview
-- Or scan the QR code using Expo Go on your mobile device.
 
 ### 3. Run Automated Tests
 Execute the comprehensive test suite verifying calculation logic, date utilities, SQLite schema constraints, foreign key restrictions, and soft-deactivation:
