@@ -138,10 +138,13 @@ npx tsc --noEmit
 - Prevent duplicate category names to maintain consistency.
 
 ### 4. Monthly Summary & History
-- Navigate past months with month selector.
-- Visual spending distribution progress bars.
-- Highest category share and daily average calculation.
-- Chronological list of all expenses in the selected month.
+- Navigate past months using a month selector.
+- Visualize spending distribution across categories with progress bars.
+- View the highest-spending category and calculate the daily average expense.
+- Browse a chronological list of all expenses for the selected month.
+- Compare monthly spending to identify spending trends over time.
+- View total monthly expenses and the number of transactions.
+- Filter expenses by category to analyze specific spending patterns.
 
 ### 5. Settings & Data Tools
 - View local SQLite storage health and transaction counts.
