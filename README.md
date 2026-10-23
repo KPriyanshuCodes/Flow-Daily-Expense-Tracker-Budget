@@ -144,7 +144,6 @@ npx tsc --noEmit
 - Browse a chronological list of all expenses for the selected month.
 - Compare monthly spending to identify spending trends over time.
 - View total monthly expenses and the number of transactions.
-- Filter expenses by category to analyze specific spending patterns.
 
 ### 5. Settings & Data Tools
 - View local SQLite storage health and transaction counts.
