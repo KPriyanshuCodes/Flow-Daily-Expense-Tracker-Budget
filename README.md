@@ -95,10 +95,7 @@ npm install
 ```bash
 npx expo start
 ```
-From the interactive terminal:
-- Press `a` for Android Emulator
-- Press `i` for iOS Simulator
-- Press `w` for Web preview
+
 
 ### 3. Run Automated Tests
 Execute the comprehensive test suite verifying calculation logic, date utilities, SQLite schema constraints, foreign key restrictions, and soft-deactivation:
@@ -136,6 +133,9 @@ npx tsc --noEmit
 - Delete unused categories.
 - Deactivate categories that already contain recorded expenses to safeguard financial records.
 - Restore deactivated categories at any time.
+- Assign categories to expenses for better financial organization and tracking.
+- View the total expenses recorded under each category.
+- Prevent duplicate category names to maintain consistency.
 
 ### 4. Monthly Summary & History
 - Navigate past months with month selector.
